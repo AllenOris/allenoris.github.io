@@ -70,12 +70,16 @@ width: 25%;
 </table>
 <p>那么对应的无脑操作为：    </p>
 <p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/02.png?raw=true" alt=""></p>
+<p>$$\Downarrow$$</p>
 <p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/03.png?raw=true" alt="">                                        </p>
+<p>$$\Downarrow$$</p>
 <p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/04.png?raw=true" alt=""></p>
+<p>$$\Downarrow$$</p>
 <p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/05.png?raw=true" alt=""></p>
+<p>$$\Downarrow$$</p>
 <p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/06.png?raw=true" alt=""></p>
 <p>好了，经过一系列操作，现在内存只剩下一半的空间，也就是4单位空间，但是如果再有一个程序E想要申请4单位的空间，却是不能成功的，因为剩下的空间并非连续，无脑申请的劣势也随之暴露出来，连续的申请与释放会使的内存碎片化，空间变得”坑坑洼洼”，出现内存空间明明够用却申请不了的问题。</p>
-<h3 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h3><p>于是，伙伴系统应运而生。在这种模型中，我们实际上给程序的空间要大于等于的程序申请的空间。当程序申请大小为m，找到一个k，使得2^(k-1)&lt;m&lt;=2^k,而2^k即实际分配的大小。</p>
+<h3 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h3><p>于是，伙伴系统应运而生。在这种模型中，我们实际上给程序的空间要大于等于的程序申请的空间。当程序申请大小为m，找到一个k，使得$2^{k-1}&lt;m\le2^k$,而$2^k$即实际分配的大小。</p>
 <p>​比如，申请3，分配4；申请6，分配8；申请10，分配16；申请16，同样分配16。</p>
 <p>接着上面的例子，</p>
 <style>
@@ -178,7 +182,7 @@ width: 25%;
 <h3 id="建立"><a href="#建立" class="headerlink" title="建立"></a>建立</h3><p>建立的过程非常简单，开一个storage大的首节点即可，假设内存大小storage=8。</p>
 <p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/14.png?raw=true" alt=""></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FriendSystem(<span class="keyword">int</span> storage):storage(storage)&#123;</span><br><span class="line">	head=<span class="keyword">new</span> node(storage,<span class="number">0</span>,storage<span class="number">-1</span>);</span><br><span class="line">	tail=<span class="keyword">new</span> node(<span class="number">-1</span>,<span class="number">-1</span>,<span class="number">-1</span>);</span><br><span class="line">	head-&gt;next=tail;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="分配进程"><a href="#分配进程" class="headerlink" title="分配进程"></a>分配进程</h3><p>分配的第一步是计算出实际要给的内存大小，还记得那个2的幂次的条件吗？当程序申请大小为m，找到一个k，使得2^(k-1)&lt;m&lt;=2^k,而2^k即实际分配的大小。直接while循环即可。</p>
+<h3 id="分配进程"><a href="#分配进程" class="headerlink" title="分配进程"></a>分配进程</h3><p>分配的第一步是计算出实际要给的内存大小，还记得那个2的幂次的条件吗？当程序申请大小为m，找到一个k，使得$2^{k-1}&lt;m\le2^k$,而$2^k$即实际分配的大小。直接while循环即可。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> distribution_size=storage;</span><br><span class="line"><span class="keyword">while</span>(need_size&lt;=distribution_size&gt;&gt;<span class="number">1</span>)</span><br><span class="line">  distribution_size&gt;&gt;=<span class="number">1</span>;<span class="comment">//得到应该分配的实际内存大小</span></span><br></pre></td></tr></table></figure>
 <p>distribution_size即为实际分配的大小。</p>
 <p>如果你关心复杂度的话，很简单，得到distribution_size的时间复杂度为O(logN)</p>
