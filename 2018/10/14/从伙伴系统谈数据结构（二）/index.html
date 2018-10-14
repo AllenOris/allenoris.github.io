@@ -4,7 +4,7 @@
 <p>线段树是二叉搜索树的一种，是存储区间信息的树形结构，是处理区间操作与查询的一大利器。</p>
 <p>如果你对它不甚了解，可以看看这篇博文<a href="https://www.cnblogs.com/AC-King/p/7789013.html" target="_blank" rel="noopener">线段树详解 (原理,实现与应用)</a>，它的原理并不复杂，树的每个结点存储一段区间的信息，两个子节各存储父节点的一半区间。其查询与修改都可以控制在O(logN)。</p>
 <p>回归正题，伙伴系统总区间大小是2的整数次幂，一对伙伴刚好可以视为完整区间一分为二，线段树再适合不过。</p>
-<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/17.png?raw=true" alt="图片加载中.."></p>
+<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/17.png?raw=true" alt=""></p>
 <h3 id="节点信息"><a href="#节点信息" class="headerlink" title="节点信息"></a>节点信息</h3><p>每个节点该存哪些信息呢？</p>
 <ol>
 <li>首先，状态是必须要有的，一个bool型的occupied，代表该区间是否有某个进程在运行；</li>
@@ -37,7 +37,7 @@
 <p>在思考线段树实现时，我本希望其能在O(logN)的时间复杂度完成插入删除。</p>
 <p>但事实并非如此，在插入进程时，我们知道一个区间是否刚好被占据和是否有子区间刚好被占据，但是，这个区间是否所有的子区间均被占据，仅凭上面两个信息是无法得知的。</p>
 <p>例如下图两个状态，打阴影的代表被程序占据的空间</p>
-<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/18.png?raw=true" alt="图片加载中.."><br><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/19.png?raw=true" alt="图片加载中.."></p>
+<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/18.png?raw=true" alt=""><br><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/19.png?raw=true" alt=""></p>
 <p>两个状态，对于[0,3]区间来说，两个值是一样的，occupied=false，has_occupied_descedent=true</p>
 <p>但是，第一张图，[0,3]区间还有[3,3]空闲，但第二张图[0,3]完全没有空闲的子区间，所以上面两个值是不够的，这就造成一个后果，<strong>最坏情况下，需要遍历整棵树(2*N-1)个结点，才能确定到底能不能插入</strong>，导致插入的时间复杂度退化为O(N)！</p>
 <p>这就失去了利用线段树结构的意义了，所以我们需要做一些改进。</p>
@@ -59,15 +59,15 @@
 </ol>
 <p>这样看就很清楚了，对于每个父亲区间，我们需要知道 <strong>它的子孙区间在每不同的size区域内是否存在完整且未被拆分的点</strong> 。</p>
 <p>那么，每个点相当于存取logN的信息。</p>
-<p>例如，之前的图，<br><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/18.png?raw=true" alt="图片加载中.."></p>
+<p>例如，之前的图，<br><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/18.png?raw=true" alt=""></p>
 <p>对于[0,3]结点，nsize=4，它的子孙：</p>
 <p>nsize=2时，有[0,1],[2,3]两段都被拆分，该层值为0</p>
 <p>nsize=1时，[3,3]为被拆分且空闲，该层值为1</p>
-<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/19.png?raw=true" alt="图片加载中.."><br>对于[0,3]结点，nsize=4，它的子孙：</p>
+<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/19.png?raw=true" alt="."><br>对于[0,3]结点，nsize=4，它的子孙：</p>
 <p>nsize=2时，有[0,1],[2,3]两段都被拆分，该层值为0</p>
 <p>nsize=1时，[0,0],[1,1],[2,2],[3,3]区间全部被占据，该层值为0</p>
 <p>注意，当一个结点的父区间还未被拆分，那么值仍未0。如，</p>
-<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/20.png?raw=true" alt="图片加载中.."> </p>
+<p><img src="https://github.com/AllenOris/Image_repo/blob/master/Blog/FriendSystem/20.png?raw=true" alt=""> </p>
 <p>对于[0,3]区间：</p>
 <p>nsize=1时，[2,2]和[3,3]虽然未被拆分，但是[2,3]结点时完整的，意味着两个子区间并没有被拆出来，所以该层值为0</p>
 <p>有了这个信息，插入进程就方便了很多了，假如上图插入一个大小为1的进程，即插入到第4层</p>
